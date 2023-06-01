@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  graphdb:
+    image: ontotext/graphdb:10.2.0
+    volumes:
+      - graphdb-data:/opt/graphdb/home
+      - ./build/libs/graphdb-plugin-compound-naming-1.0-SNAPSHOT.jar:/opt/graphdb/dist/lib/plugins/example-plugin/graphdb-plugin-compound-naming-1.0-SNAPSHOT.jar
+    ports:
+      - 7200:7200
+    environment:
+      GDB_JAVA_OPTS: >-
+        -Xmx4g
+        -Xms2g
+        -Dgraphdb.home=/opt/graphdb/home
+        -Dgraphdb.workbench.importDirectory=/opt/graphdb/home/graphdb-import
+        -Dgraphdb.workbench.cors.enable=true
+        -Denable-context-index=true
+        -Dentity-pool-implementation=transactional
+        -Dhealth.max.query.time.seconds=600
+        -Dgraphdb.append.request.id.headers=true
+        -Dreuse.vars.in.subselects=true
+    networks:
+      - graphdb
+    profiles:
+      - graphdb
+
+volumes:
+  graphdb-data:
+
+networks:
+  graphdb:
