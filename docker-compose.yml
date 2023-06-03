@@ -9,6 +9,7 @@ services:
     ports:
       - 7200:7200
     environment:
+      # Note: running GraphDB in DEBUG mode
       GDB_JAVA_OPTS: >-
         -Xmx4g
         -Xms2g
@@ -20,6 +21,7 @@ services:
         -Dhealth.max.query.time.seconds=600
         -Dgraphdb.append.request.id.headers=true
         -Dreuse.vars.in.subselects=true
+        -Dgraphdb.logger.root.level=DEBUG
     networks:
       - graphdb
     profiles:

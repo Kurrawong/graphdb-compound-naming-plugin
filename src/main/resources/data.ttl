@@ -32247,6 +32247,7 @@ astiso:unofficial
 
 <https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435>
     a addr:AddressableObject ;
+    a <urn:test:type> ;
     rdfs:label "addr obj 1075435"@en ;
     rdfs:label "addr obj 1075435 second"@en ;
     sdo:name <https://linked.data.gov.au/dataset/qld-addr/addr-1075435> ;
