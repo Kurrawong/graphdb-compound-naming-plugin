@@ -7,7 +7,15 @@ class ExampleBasicPlugin : PluginBase(), PatternInterpreter {
     var nowPredicateId: Long? = null
 
     override fun getName(): String {
-        return "ExampleBasicPlugin"
+        return "ExampleBasic"
+    }
+
+    private fun logInfo(s: String) {
+        logger.info("$name plugin - $s")
+    }
+
+    private fun logDebug(s: String) {
+        logger.debug("$name plugin - $s")
     }
 
     override fun initialize(initReason: InitReason, pluginConnection: PluginConnection) {
@@ -16,7 +24,7 @@ class ExampleBasicPlugin : PluginBase(), PatternInterpreter {
         // Put the predicate in the entity pool using the SYSTEM scope.
         nowPredicateId = pluginConnection.entities.put(nowPredicate, Entities.Scope.SYSTEM)
 
-        logger.info("ExampleBasic plugin initialized!")
+        logInfo("initialised")
     }
 
     override fun estimate(
@@ -38,11 +46,11 @@ class ExampleBasicPlugin : PluginBase(), PatternInterpreter {
         pluginConnection: PluginConnection,
         requestContext: RequestContext?
     ): StatementIterator? {
-        logger.info("ExampleBasic plugin - start of interpret call")
+        logDebug("start of interpret call")
         return if (predicate == nowPredicateId) {
             val literalId = createDateTimeLiteral(pluginConnection.entities)
-            logger.info("ExampleBasic plugin - created literal with id $literalId")
-            return StatementIterator.create(subject, predicate, literalId, 0)
+            logDebug("created literal with id $literalId")
+            StatementIterator.create(subject, predicate, literalId, 0)
         } else {
             null
         }
@@ -50,7 +58,7 @@ class ExampleBasicPlugin : PluginBase(), PatternInterpreter {
 
     private fun createDateTimeLiteral(entities: Entities): Long {
         val literal = SimpleValueFactory.getInstance().createLiteral(Date())
-        logger.info("ExampleBasic plugin - created literal with value $literal")
+        logDebug("created literal with value $literal")
         return entities.put(literal, Entities.Scope.REQUEST)
     }
 }
