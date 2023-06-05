@@ -5,7 +5,7 @@ services:
     image: ontotext/graphdb:10.2.1
     volumes:
       - graphdb-data:/opt/graphdb/home
-      - ./build/libs/compound-naming-1.0-SNAPSHOT.jar:/opt/graphdb/dist/lib/plugins/compound-naming/compound-naming-1.0-SNAPSHOT.jar
+      - ./build/libs/compound-naming-0.1.0-LOCAL.jar:/opt/graphdb/dist/lib/plugins/compound-naming/compound-naming-0.1.0-LOCAL.jar
       - ./src/main/resources/data.ttl:/opt/graphdb/home/graphdb-import/data.ttl
     ports:
       - "7200:7200"
