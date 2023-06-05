@@ -4,6 +4,14 @@ A GraphDB plugin implemented using the [GraphDB Plugin API](https://graphdb.onto
 
 See the [Compound Naming Model](https://agldwg.github.io/compound-naming-model/model.html) for more information.
 
+## Plugin details
+
+This plugin adds a [SPARQL property function](https://graphdb.ontotext.com/documentation/10.2/sparql-functions-reference.html#sparql-functions-vs-magic-predicates) (also known as magic predicates) to GraphDB.
+
+The single function has the namespace `https://pid.kurrawong.ai/func/` with the local name `getLiteralComponents` and takes two SPARQL variables as arguments to bind the return values to. One caveat with this particular implementation is that the SPARQL variables passed to the function _must_ be `?componentType` and `?componentValue`, in that order.
+
+See the next section below for an example of running the function within a SPARQL query.
+
 ## Running prebuilt GraphDB container image with plugin preloaded
 
 Run a prebuilt GraphDB container image with the plugin preloaded.
