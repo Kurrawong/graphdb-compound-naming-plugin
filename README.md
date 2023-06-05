@@ -4,6 +4,31 @@ A GraphDB plugin implemented using the [GraphDB Plugin API](https://graphdb.onto
 
 See the [Compound Naming Model](https://agldwg.github.io/compound-naming-model/model.html) for more information.
 
+## Running prebuilt GraphDB container image with plugin preloaded
+
+Run a prebuilt GraphDB container image with the plugin preloaded.
+
+```bash
+docker run --rm -d --name graphdb-compound-naming -p 7200:7200 ghcr.io/kurrawong/graphdb-compound-naming
+```
+
+This image comes preloaded with example data.
+
+To load the preloaded data, first create a [new repository](http://localhost:7200/repository).
+
+Navigate to http://localhost:7200/import#server and import `data.ttl`.
+
+Finally, test out the plugin by running a SPARQL query at http://localhost:7200/sparql.
+
+```sparql
+PREFIX func: <https://pid.kurrawong.ai/func/>
+SELECT *
+WHERE {
+    BIND(<https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435> as ?iri)
+    ?iri func:getLiteralComponents (?componentType ?componentValue) .
+}
+```
+
 ## Running locally
 
 See [build.gradle.kts](build.gradle.kts) for the JDK version used in this project.
