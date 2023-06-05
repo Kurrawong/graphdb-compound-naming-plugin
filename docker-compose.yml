@@ -6,6 +6,7 @@ services:
     volumes:
       - graphdb-data:/opt/graphdb/home
       - ./build/libs/compound-naming-1.0-SNAPSHOT.jar:/opt/graphdb/dist/lib/plugins/compound-naming/compound-naming-1.0-SNAPSHOT.jar
+      - ./src/main/resources/data.ttl:/opt/graphdb/home/graphdb-import/data.ttl
     ports:
       - "7200:7200"
     environment:
