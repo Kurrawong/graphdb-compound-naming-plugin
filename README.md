@@ -29,6 +29,15 @@ WHERE {
 }
 ```
 
+And the result set will be something like the following.
+
+| iri                                                          | componentType                                                             | componentValue |
+|--------------------------------------------------------------|---------------------------------------------------------------------------|----------------|
+| https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435 | https://w3id.org/profile/anz-address/AnzAddressComponentTypes/numberFirst | 72             |
+| https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435 | https://linked.data.gov.au/def/roads/ct/RoadType                          | ST (Y)         |
+| https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435 | https://w3id.org/profile/anz-address/AnzAddressComponentTypes/locality    | SHORNCLIFFE    |
+| https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435 | https://linked.data.gov.au/def/roads/ct/RoadName                          | Yundah         |
+
 ## Running locally
 
 See [build.gradle.kts](build.gradle.kts) for the JDK version used in this project.
