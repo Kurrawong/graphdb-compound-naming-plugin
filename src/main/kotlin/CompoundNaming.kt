@@ -1,17 +1,18 @@
+import com.ontotext.trree.sdk.Entities
 import com.ontotext.trree.sdk.PluginConnection
 import com.ontotext.trree.sdk.StatementIterator
 import com.ontotext.trree.sdk.Statements
 import org.eclipse.rdf4j.model.Value
 
-class Statement(statement: LongArray, pluginConnection: PluginConnection) {
+class Statement(statement: LongArray, entities: Entities) {
     val subjectId = statement[0]
     val predicateId = statement[1]
     val objectId = statement[2]
     val contextId = statement[3]
-    val subject = pluginConnection.entities.get(subjectId)
-    val predicate = pluginConnection.entities.get(predicateId)
-    val `object` = pluginConnection.entities.get(objectId)
-    val context = pluginConnection.entities.get(contextId)
+    val subject = entities.get(subjectId)
+    val predicate = entities.get(predicateId)
+    val `object` = entities.get(objectId)
+    val context = entities.get(contextId)
 }
 
 data class Entity(val id: Long, val value: Value)
@@ -30,6 +31,7 @@ class CompoundNaming(
     private val PREDICATE = 1
     private val OBJECT = 2
     private val CONTEXT = 3
+    private val entities: Entities = pluginConnection.entities
     private val statements: Statements = pluginConnection.statements
     private val ANY: Long = 0
 
@@ -57,11 +59,11 @@ class CompoundNaming(
         return values.toList()
     }
 
-    private fun getComponentLiteral(focusNode: Long): Pair<Entity, Entity> {
-
-        val result = toList(statements[focusNode, valueId, 0])
-        var sdoNames = toList(statements[focusNode, nameId, ANY]).map { statement -> statement[OBJECT] }
-        var hasParts = toList(statements[focusNode, hasPartId, 0]).map { statement -> statement[OBJECT] }
+    private fun getComponentLiteral(focusNodeId: Long): Pair<Entity, Entity> {
+        val focusNode = entities.get(focusNodeId)
+        val result = toList(statements[focusNodeId, valueId, 0])
+        var sdoNames = toList(statements[focusNodeId, nameId, ANY]).map { statement -> statement[OBJECT] }
+        var hasParts = toList(statements[focusNodeId, hasPartId, 0]).map { statement -> statement[OBJECT] }
 
         if (hasParts.isNotEmpty()) {
             val hasPartNode = hasParts[0]
@@ -82,22 +84,22 @@ class CompoundNaming(
         }
 
         if (result.isEmpty()) {
-            throw Exception("Focus node $focusNode did not have any values for sdo:value.")
+            throw Exception("Focus node $focusNode with id $focusNodeId did not have any values for sdo:value.")
         }
 
-        val value = Statement(result[0], pluginConnection)
+        val value = Statement(result[0], entities)
 
         if (value.`object`.isIRI) {
             return getComponentLiteral(value.objectId)
         }
 
-        val componentTypes = toList(statements[focusNode, additionalType, ANY])
+        val componentTypes = toList(statements[focusNodeId, additionalType, ANY])
 
         if (componentTypes.isEmpty()) {
-            throw Exception("Focus node $focusNode does not have a component type.")
+            throw Exception("Focus node $focusNode with id $focusNodeId does not have a component type.")
         }
 
-        val componentType = Statement(componentTypes[0], pluginConnection)
+        val componentType = Statement(componentTypes[0], entities)
         return Entity(componentType.objectId, componentType.`object`) to Entity(value.objectId, value.`object`)
     }
 }
