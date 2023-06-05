@@ -82,3 +82,7 @@ Stop the container.
 ```bash
 docker-compose --profile graphdb down
 ```
+
+## License
+
+[BSD-3-Clause license](LICENSE).
