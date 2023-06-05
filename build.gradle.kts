@@ -1,3 +1,4 @@
+val projectVersion: String by project
 val graphdbSdkVersion: String by project
 val graphdbVersion: String by project
 val eclipseCollectionsVersion: String by project
@@ -9,7 +10,7 @@ plugins {
 }
 
 group = "ai.kurrawong.graphdb"
-version = "1.0-SNAPSHOT"
+version = projectVersion
 
 repositories {
     mavenCentral()
