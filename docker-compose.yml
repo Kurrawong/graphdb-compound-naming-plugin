@@ -7,7 +7,7 @@ services:
       - graphdb-data:/opt/graphdb/home
       - ./build/libs/compound-naming-1.0-SNAPSHOT.jar:/opt/graphdb/dist/lib/plugins/compound-naming/compound-naming-1.0-SNAPSHOT.jar
     ports:
-      - 7200:7200
+      - "7200:7200"
     environment:
       # Note: running GraphDB in DEBUG mode
       GDB_JAVA_OPTS: >-
