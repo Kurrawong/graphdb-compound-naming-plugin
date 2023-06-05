@@ -1,3 +1,3 @@
 
-rootProject.name = "graphdb-plugin-compound-naming"
+rootProject.name = "compound-naming"
 

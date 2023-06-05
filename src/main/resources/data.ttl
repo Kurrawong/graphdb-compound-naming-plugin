@@ -32250,6 +32250,7 @@ astiso:unofficial
     a <urn:test:type> ;
     rdfs:label "addr obj 1075435"@en ;
     rdfs:label "addr obj 1075435 second"@en ;
+    rdfs:label "step on no pets" ;
     sdo:name <https://linked.data.gov.au/dataset/qld-addr/addr-1075435> ;
     addr:hasAddress <https://linked.data.gov.au/dataset/qld-addr/addr-1075435> ;
 .

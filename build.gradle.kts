@@ -8,7 +8,7 @@ plugins {
     application
 }
 
-group = "com.edmondchuc.graphdb"
+group = "ai.kurrawong.graphdb"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -21,11 +21,11 @@ repositories {
 
 dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.8.20-RC")
-//    implementation("com.ontotext.graphdb:graphdb-sdk:$graphdbSdkVersion")
     implementation("com.ontotext.graphdb:graphdb-tests-base:$graphdbVersion")
     implementation("com.ontotext.graphdb:graphdb-runtime:$graphdbVersion")
     implementation("org.eclipse.collections:eclipse-collections:$eclipseCollectionsVersion")
     implementation("org.eclipse.rdf4j:rdf4j-model:$rdf4jVersion")
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks.test {
