@@ -43,7 +43,7 @@ class CompoundNamingPlugin : PluginBase(), ListPatternInterpreter, Preprocessor,
     override fun initialize(initReason: InitReason?, pluginConnection: PluginConnection) {
         // Create entities here where while there is an active transaction
         getLiteralComponentsId =
-            createIRI("https://pid.kurrawong.ai/func/getLiteralComponents", pluginConnection, Entities.Scope.SYSTEM)
+            createIRI("https://linked.data.gov.au/def/cn/func/getLiteralComponents", pluginConnection, Entities.Scope.SYSTEM)
         hasAddressId = createIRI("https://w3id.org/profile/anz-address/hasAddress", pluginConnection)
         valueId = createIRI("http://www.w3.org/1999/02/22-rdf-syntax-ns#value", pluginConnection)
         nameId = createIRI("https://schema.org/name", pluginConnection)
