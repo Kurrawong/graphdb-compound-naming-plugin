@@ -52,7 +52,7 @@ fun main() {
             bind(<https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435> as ?iri)
             #?iri ?p ?o .
             
-            ?iri rdfs:label ?label .
+            #?iri rdfs:label ?label .
             #FILTER(cfn:palindrome(str(?label)))
             #?iri a ?type .
             
