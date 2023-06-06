@@ -1,14 +1,22 @@
 # Compound Naming Plugin for GraphDB
 
-A GraphDB plugin implemented using the [GraphDB Plugin API](https://graphdb.ontotext.com/documentation/10.2/plug-in-api.html).
+A GraphDB plugin implemented using
+the [GraphDB Plugin API](https://graphdb.ontotext.com/documentation/10.2/plug-in-api.html).
 
 See the [Compound Naming Model](https://linked.data.gov.au/def/cn) for more information.
 
 ## Plugin details
 
-This plugin adds a [SPARQL property function](https://graphdb.ontotext.com/documentation/10.2/sparql-functions-reference.html#sparql-functions-vs-magic-predicates) (also known as a magic predicate) to GraphDB.
+This plugin adds
+a [SPARQL property function](https://graphdb.ontotext.com/documentation/10.2/sparql-functions-reference.html#sparql-functions-vs-magic-predicates) (
+also known as a magic predicate) to GraphDB.
 
-The single function has the namespace `https://pid.kurrawong.ai/func/` with the local name `getLiteralComponents` and takes two SPARQL variables as arguments to bind the return values to. One caveat with this particular implementation is that the SPARQL variables passed to the function _must_ be `?componentType` and `?componentValue`, in that order.
+The single function has the namespace `https://linked.data.gov.au/def/cn/func/` with the local
+name `getLiteralComponents` and takes two SPARQL variables as arguments to bind the return values to.
+
+Note on the limitation of the current implementation. The SPARQL variable of the subject when calling the function
+_must_ be named `?compoundNameObject` and the SPARQL variables passed to the function _must_ be `?componentType`
+and `?componentValue`, in that order.
 
 See the next section below for an example of running the function within a SPARQL query.
 
@@ -29,22 +37,33 @@ Navigate to http://localhost:7200/import#server and import `data.ttl`.
 Finally, test out the plugin by running a SPARQL query at http://localhost:7200/sparql.
 
 ```sparql
-PREFIX func: <https://pid.kurrawong.ai/func/>
+PREFIX func: <https://linked.data.gov.au/def/cn/func/>
 SELECT *
 WHERE {
-    BIND(<https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435> as ?iri)
-    ?iri func:getLiteralComponents (?componentType ?componentValue) .
+    VALUES (?compoundNameObject) {
+        # Address Compound Name
+        (<https://linked.data.gov.au/dataset/qld-addr/addr-1075435>)
+        # Road Compound Name - a sub-name of the above Address
+        (<https://linked.data.gov.au/dataset/qld-addr/road-QLDRYUN1530828927326621000>)
+        # Locality Compound Name - a sub-name of the above Address
+        (<https://linked.data.gov.au/dataset/qld-addr/locality-SHORNCLIFFE>)
+    }
+
+    ?compoundNameObject func:getLiteralComponents (?componentType ?componentValue) .
 }
 ```
 
 And the result set will be something like the following.
 
-| iri                                                          | componentType                                                             | componentValue |
-|--------------------------------------------------------------|---------------------------------------------------------------------------|----------------|
-| https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435 | https://w3id.org/profile/anz-address/AnzAddressComponentTypes/numberFirst | 72             |
-| https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435 | https://linked.data.gov.au/def/roads/ct/RoadType                          | ST (Y)         |
-| https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435 | https://w3id.org/profile/anz-address/AnzAddressComponentTypes/locality    | SHORNCLIFFE    |
-| https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435 | https://linked.data.gov.au/def/roads/ct/RoadName                          | Yundah         |
+| iri                                                                         | componentType                                                             | componentValue |
+|-----------------------------------------------------------------------------|---------------------------------------------------------------------------|----------------|
+| https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435                | https://w3id.org/profile/anz-address/AnzAddressComponentTypes/numberFirst | 72             |
+| https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435                | https://linked.data.gov.au/def/roads/ct/RoadType                          | ST (Y)         |
+| https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435                | https://w3id.org/profile/anz-address/AnzAddressComponentTypes/locality    | SHORNCLIFFE    |
+| https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435                | https://linked.data.gov.au/def/roads/ct/RoadName                          | Yundah         |
+| https://linked.data.gov.au/dataset/qld-addr/road-QLDRYUN1530828927326621000 | https://linked.data.gov.au/def/roads/ct/RoadType                          | ST (Y)         |
+| https://linked.data.gov.au/dataset/qld-addr/road-QLDRYUN1530828927326621000 | https://linked.data.gov.au/def/roads/ct/RoadName                          | Yundah         |
+| https://linked.data.gov.au/dataset/qld-addr/locality-SHORNCLIFFE            | https://w3id.org/profile/anz-address/AnzAddressComponentTypes/locality    | SHORNCLIFFE    |
 
 ## Running locally
 

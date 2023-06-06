@@ -43,7 +43,7 @@ fun main() {
 
     // Use the repository
     val query = """
-        PREFIX func: <https://pid.kurrawong.ai/func/>
+        PREFIX func: <https://linked.data.gov.au/def/cn/func/>
         SELECT *
         WHERE {
             VALUES (?compoundNameObject) {
