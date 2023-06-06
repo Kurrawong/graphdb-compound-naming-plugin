@@ -43,10 +43,7 @@ fun main() {
 
     // Use the repository
     val query = """
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX func: <https://pid.kurrawong.ai/func/>
-        PREFIX ex: <https://example.com/>
-        PREFIX cfn: <http://example.org/custom-function/>
         SELECT *
         WHERE {
             VALUES (?compoundNameObject) {
