@@ -47,19 +47,18 @@ fun main() {
         PREFIX func: <https://pid.kurrawong.ai/func/>
         PREFIX ex: <https://example.com/>
         PREFIX cfn: <http://example.org/custom-function/>
-        select *
-        where {
-            bind(<https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435> as ?iri)
-            #?iri ?p ?o .
+        SELECT *
+        WHERE {
+            VALUES (?compoundNameObject) {
+                # Address Compound Name
+                (<https://linked.data.gov.au/dataset/qld-addr/addr-1075435>)
+                # Road Compound Name - a sub-name of the above Address
+                (<https://linked.data.gov.au/dataset/qld-addr/road-QLDRYUN1530828927326621000>)
+                # Locality Compound Name - a sub-name of the above Address
+                (<https://linked.data.gov.au/dataset/qld-addr/locality-SHORNCLIFFE>)
+            }
             
-            #?iri rdfs:label ?label .
-            #FILTER(cfn:palindrome(str(?label)))
-            #?iri a ?type .
-            
-            ?iri func:getLiteralComponents (?componentType ?componentValue) .
-            
-            #?iri ex:now ?now .
-            #?label <http://example.com/getLabel> (?iri rdfs:label "en") .
+            ?compoundNameObject func:getLiteralComponents (?componentType ?componentValue) .
         }
     """.trimIndent()
 
