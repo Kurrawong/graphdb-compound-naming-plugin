@@ -7,6 +7,8 @@ See the [Compound Naming Model](https://linked.data.gov.au/def/cn) for more info
 
 ## Plugin details
 
+This plugin was developed and tested with GraphDB version 10.2.1.
+
 This plugin adds
 a [SPARQL property function](https://graphdb.ontotext.com/documentation/10.2/sparql-functions-reference.html#sparql-functions-vs-magic-predicates) (
 also known as a magic predicate) to GraphDB.
@@ -14,9 +16,34 @@ also known as a magic predicate) to GraphDB.
 The single function has the namespace `https://linked.data.gov.au/def/cn/func/` with the local
 name `getLiteralComponents` and takes two SPARQL variables as arguments to bind the return values to.
 
-Note on the limitation of the current implementation. The SPARQL variable of the subject when calling the function
-_must_ be named `?compoundNameObject` and the SPARQL variables passed to the function _must_ be `?componentType`
+### Limitations of the current implementation
+
+#### Hardcoded SPARQL variables
+
+The SPARQL variable of the subject when calling the function _must_ be named `?compoundNameObject` and the SPARQL variables passed to the function _must_ be `?componentType`
 and `?componentValue`, in that order.
+
+#### Variables not properly bound
+
+The SPARQL variables used when calling the function are not bound correctly to be used further within the same query context.
+
+For example, these following additions to the same query context don't work.
+
+`?componentType` is not properly bound to be used further.
+
+```sparql
+?compoundNameObject func:getLiteralComponents (?componentType ?componentValue) .
+?other ?componentType ?t .
+```
+
+`?componentValue` is not properly bound to be used further.
+
+```sparql
+?compoundNameObject func:getLiteralComponents (?componentType ?componentValue) .
+BIND(STRLEN(str(?componentValue)) AS ?length)
+```
+
+These limitations can be solved but requires the implementor to have a better understanding of the low-level [GraphDB Plugin API](https://graphdb.ontotext.com/documentation/10.2/plug-in-api.html).
 
 See the next section below for an example of running the function within a SPARQL query.
 
