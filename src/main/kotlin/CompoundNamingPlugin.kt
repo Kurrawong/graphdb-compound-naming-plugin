@@ -90,7 +90,7 @@ class CompoundNamingPlugin : PluginBase(), ListPatternInterpreter, Preprocessor,
                 componentQueue.add(iter.`object`)
             }
             val compoundNaming = CompoundNaming(
-                pluginConnection, componentQueue,
+                pluginConnection, componentQueue, this,
                 getLiteralComponentsId!!, hasAddressId!!, valueId!!, nameId!!, hasPartId!!, additionalTypeId!!
             )
 

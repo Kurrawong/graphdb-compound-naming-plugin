@@ -1,4 +1,5 @@
 import com.ontotext.trree.sdk.Entities
+import com.ontotext.trree.sdk.PluginBase
 import com.ontotext.trree.sdk.PluginConnection
 import com.ontotext.trree.sdk.StatementIterator
 import com.ontotext.trree.sdk.Statements
@@ -18,8 +19,9 @@ class Statement(statement: LongArray, entities: Entities) {
 data class Entity(val id: Long, val value: Value)
 
 class CompoundNaming(
-    private val pluginConnection: PluginConnection,
+    pluginConnection: PluginConnection,
     private var componentQueue: List<Long>,
+    private val plugin: PluginBase,
     private val getLiteralComponentsId: Long,
     private val hasAddressId: Long,
     private val valueId: Long,
@@ -43,7 +45,9 @@ class CompoundNaming(
             componentQueue = this.componentQueue.drop(1)
 
             val value = getComponentLiteral(startingNode)
-            data.add(value)
+            if (value != null) {
+                data.add(value)
+            }
 
             if (this.componentQueue.isEmpty()) {
                 break
@@ -59,7 +63,7 @@ class CompoundNaming(
         return values.toList()
     }
 
-    private fun getComponentLiteral(focusNodeId: Long): Pair<Entity, Entity> {
+    private fun getComponentLiteral(focusNodeId: Long): Pair<Entity, Entity>? {
         val focusNode = entities.get(focusNodeId)
         val result = toList(statements[focusNodeId, valueId, 0])
         var sdoNames = toList(statements[focusNodeId, nameId, ANY]).map { statement -> statement[OBJECT] }
@@ -84,7 +88,8 @@ class CompoundNaming(
         }
 
         if (result.isEmpty()) {
-            throw Exception("Focus node $focusNode with id $focusNodeId did not have any values for sdo:value.")
+            plugin.logger.info("Focus node $focusNode with id $focusNodeId does not have any values for sdo:value.")
+            return null
         }
 
         val value = Statement(result[0], entities)
@@ -96,7 +101,8 @@ class CompoundNaming(
         val componentTypes = toList(statements[focusNodeId, additionalType, ANY])
 
         if (componentTypes.isEmpty()) {
-            throw Exception("Focus node $focusNode with id $focusNodeId does not have a component type.")
+            plugin.logger.info("Focus node $focusNode with id $focusNodeId does not have a component type.")
+            return null
         }
 
         val componentType = Statement(componentTypes[0], entities)
