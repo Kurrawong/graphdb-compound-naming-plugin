@@ -1,16 +1,20 @@
 import com.ontotext.trree.sdk.*
 import com.ontotext.trree.sdk.impl.RequestContextImpl
+import org.eclipse.rdf4j.model.Value
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory
 import org.eclipse.rdf4j.query.BindingSet
 import org.eclipse.rdf4j.query.impl.MapBindingSet
 import java.lang.Exception
 
 class CompoundNamingPlugin : PluginBase(), ListPatternInterpreter, Preprocessor, Postprocessor {
+    val componentNameObject = "compoundNameObject"
     val componentType = "componentType"
     val componentValue = "componentValue"
     val bindingSets = mutableListOf<BindingSet>()
     val bindingVarsToAdd = mutableSetOf<String>()
     val postprocessBindingSets = mutableListOf<BindingSet>()
+    var focusId: Long? = null
+    var focusIRI: Value? = null
 
     var getLiteralComponentsId: Long? = null
     var hasAddressId: Long? = null
@@ -84,11 +88,11 @@ class CompoundNamingPlugin : PluginBase(), ListPatternInterpreter, Preprocessor,
                 throw Exception("requestContext is null")
             }
 
-            val iter = pluginConnection.statements[subjectId, hasAddressId!!, 0]
+            focusId = subjectId
+            focusIRI = pluginConnection.entities.get(focusId!!)
             val componentQueue = mutableListOf<Long>()
-            while (iter.next()) {
-                componentQueue.add(iter.`object`)
-            }
+            componentQueue.add(subjectId)
+
             val compoundNaming = CompoundNaming(
                 pluginConnection, componentQueue, this,
                 getLiteralComponentsId!!, hasAddressId!!, valueId!!, nameId!!, hasPartId!!, additionalTypeId!!
@@ -99,6 +103,7 @@ class CompoundNamingPlugin : PluginBase(), ListPatternInterpreter, Preprocessor,
                 iterList.add(longArrayOf(subjectId, pair.first.id, pair.second.id, contextId))
 
                 val bindingSet = MapBindingSet()
+                bindingSet.addBinding("compoundNameObject", focusIRI)
                 bindingSet.addBinding("componentType", pair.first.value)
                 bindingSet.addBinding("componentValue", pair.second.value)
                 bindingSets.add(bindingSet)
@@ -117,16 +122,21 @@ class CompoundNamingPlugin : PluginBase(), ListPatternInterpreter, Preprocessor,
 
     override fun shouldPostprocess(requestContext: RequestContext?): Boolean {
         logInfo("shouldPostProcess call")
-        return bindingSets.isNotEmpty()
+        return bindingSets.isNotEmpty() || postprocessBindingSets.isNotEmpty()
     }
 
     override fun postprocess(bindingSet: BindingSet, requestContext: RequestContext?): BindingSet? {
         logInfo("postprocess call")
+        if (bindingSets.isEmpty()) {
+            return null
+        }
+
+        var newBindingSetsAdded = false
         for (selfBindingSet in bindingSets) {
             val cloneSelfBindingSet = MapBindingSet()
             selfBindingSet.map { cloneSelfBindingSet.addBinding(it.name, it.value) }
             for (bindingName in bindingSet.bindingNames) {
-                if (bindingName != componentType && bindingName != componentValue) {
+                if (bindingName != componentNameObject && bindingName != componentType && bindingName != componentValue) {
                     bindingVarsToAdd.add(bindingName)
                 }
                 if (bindingVarsToAdd.contains(bindingName)) {
@@ -135,7 +145,12 @@ class CompoundNamingPlugin : PluginBase(), ListPatternInterpreter, Preprocessor,
             }
             if (!postprocessBindingSets.contains(cloneSelfBindingSet)) {
                 postprocessBindingSets.add(cloneSelfBindingSet)
+                newBindingSetsAdded = true
             }
+        }
+
+        if (newBindingSetsAdded) {
+            bindingSets.clear()
         }
 
         return null
