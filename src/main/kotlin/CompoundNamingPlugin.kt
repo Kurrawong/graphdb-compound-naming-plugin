@@ -27,8 +27,8 @@ class CompoundNamingPlugin : PluginBase(), ListPatternInterpreter, Preprocessor,
         return "compound-naming"
     }
 
-    private fun logInfo(s: String) {
-        logger.info("$name plugin - $s")
+    private fun logDebug(s: String) {
+        logger.debug("$name plugin - $s")
     }
 
     private fun createIRI(
@@ -43,14 +43,18 @@ class CompoundNamingPlugin : PluginBase(), ListPatternInterpreter, Preprocessor,
     override fun initialize(initReason: InitReason?, pluginConnection: PluginConnection) {
         // Create entities here where while there is an active transaction
         getLiteralComponentsId =
-            createIRI("https://linked.data.gov.au/def/cn/func/getLiteralComponents", pluginConnection, Entities.Scope.SYSTEM)
+            createIRI(
+                "https://linked.data.gov.au/def/cn/func/getLiteralComponents",
+                pluginConnection,
+                Entities.Scope.SYSTEM
+            )
         hasAddressId = createIRI("https://w3id.org/profile/anz-address/hasAddress", pluginConnection)
         valueId = createIRI("http://www.w3.org/1999/02/22-rdf-syntax-ns#value", pluginConnection)
         nameId = createIRI("https://schema.org/name", pluginConnection)
         hasPartId = createIRI("https://schema.org/hasPart", pluginConnection)
         additionalTypeId = createIRI("https://schema.org/additionalType", pluginConnection)
 
-        logInfo("initialized")
+        logDebug("initialized")
     }
 
     override fun estimate(
@@ -65,7 +69,7 @@ class CompoundNamingPlugin : PluginBase(), ListPatternInterpreter, Preprocessor,
     }
 
     override fun preprocess(request: Request?): RequestContext? {
-        logInfo("preprocess call")
+        logDebug("preprocess call")
         if (request is QueryRequest) {
             return RequestContextImpl(request)
         }
@@ -81,7 +85,7 @@ class CompoundNamingPlugin : PluginBase(), ListPatternInterpreter, Preprocessor,
         pluginConnection: PluginConnection,
         requestContext: RequestContext?
     ): StatementIterator? {
-        logInfo("start of interpret call")
+        logDebug("start of interpret call")
         return if (predicateId == getLiteralComponentsId && subjectId.toInt() != 0) {
             // Check if we actually need the requestContext object
             if (requestContext == null) {
@@ -112,21 +116,21 @@ class CompoundNamingPlugin : PluginBase(), ListPatternInterpreter, Preprocessor,
             StatementIterator.create(iterList.toTypedArray())
 
         } else if (predicateId == getLiteralComponentsId && subjectId.toInt() == 0) {
-            logInfo("subjectId is 0, returning empty iterator")
+            logDebug("subjectId is 0, returning empty iterator")
             StatementIterator.EMPTY
         } else {
-            logInfo("Not getLiteralComponents predicate, returning null")
+            logDebug("Not getLiteralComponents predicate, returning null")
             null
         }
     }
 
     override fun shouldPostprocess(requestContext: RequestContext?): Boolean {
-        logInfo("shouldPostProcess call")
+        logDebug("shouldPostProcess call")
         return bindingSets.isNotEmpty() || postprocessBindingSets.isNotEmpty()
     }
 
     override fun postprocess(bindingSet: BindingSet, requestContext: RequestContext?): BindingSet? {
-        logInfo("postprocess call")
+        logDebug("postprocess call")
         if (bindingSets.isEmpty()) {
             return null
         }
@@ -157,7 +161,7 @@ class CompoundNamingPlugin : PluginBase(), ListPatternInterpreter, Preprocessor,
     }
 
     override fun flush(requestContext: RequestContext?): MutableIterator<BindingSet> {
-        logInfo("flush call ${postprocessBindingSets.size} rows")
+        logDebug("flush call ${postprocessBindingSets.size} rows")
 
         // Make a copy
         val currentBindingSets = postprocessBindingSets.toMutableList()
