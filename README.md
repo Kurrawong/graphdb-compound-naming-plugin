@@ -47,6 +47,12 @@ These limitations can be solved but requires the implementor to have a better un
 
 See the next section below for an example of running the function within a SPARQL query.
 
+#### Components must have `rdf:type` and `sdo:additionalType`
+
+The current implementation requires a component type to have an `sdo:additionalType` and an `rdf:type` value. It would make sense to also have a fallback if an `rdf:type` value is not found, for example, `skos:prefLabel`.
+
+Future implementations may consider other predicates and maybe even have a priority order. These same considerations may also be applied to the language tags of the values.
+
 ## Running prebuilt GraphDB container image with plugin preloaded
 
 Run a prebuilt GraphDB container image with the plugin preloaded.
@@ -83,7 +89,7 @@ WHERE {
 And the result set will be something like the following.
 
 | iri                                                                         | componentType                                                             | componentValue |
-|-----------------------------------------------------------------------------|---------------------------------------------------------------------------|----------------|
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------- | -------------- |
 | https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435                | https://w3id.org/profile/anz-address/AnzAddressComponentTypes/numberFirst | 72             |
 | https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435                | https://linked.data.gov.au/def/roads/ct/RoadType                          | ST (Y)         |
 | https://linked.data.gov.au/dataset/qld-addr/addr-obj-1075435                | https://w3id.org/profile/anz-address/AnzAddressComponentTypes/locality    | SHORNCLIFFE    |
